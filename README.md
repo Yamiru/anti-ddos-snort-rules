@@ -3,6 +3,7 @@
 ![Snort](https://img.shields.io/badge/Snort-version%202.9.20-red) 
 ![TeamSpeak 3 version 3.13.7 Linux](https://img.shields.io/badge/TeamSpeak%203%20version%203.13.7%20Linux-blue)
 
+
 ### Anti ddos
 
 This Snort ruleset contains various protections against network attacks, including measures specifically designed for securing TeamSpeak 3 servers. Below is a summary of the protections provided and instructions on integrating these rules into your Snort deployment.
@@ -13,7 +14,7 @@ How to Add Rules to Snort:
 1. edit config  ```nano /etc/snort/snort.conf```
 2. add this **include $RULE_PATH/local.rules** (if it's not already there)
 3. save ctrl+x y
-4. add local rules to /etc/snort/rules/local.rules
+4. add [local.rules](https://github.com/Yamiru/anti-ddos-snort-rules/blob/main/local.rules) to /etc/snort/rules/local.rules
 5. test snort ```snort -T -c /etc/snort/snort.conf```
 
 
