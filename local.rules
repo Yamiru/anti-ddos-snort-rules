@@ -1,0 +1,90 @@
+# $Id: local.rules,v 1.11 2004/07/23 20:15:44 bmc Exp $
+# ----------------
+# LOCAL RULES
+# ----------------
+# This file intentionally does not come with signatures.  Put your local
+# additions here.
+
+
+# ICMP útoky
+alert icmp any any -> $HOME_NET any (msg:"ICMP Echo Request Detected"; sid:100001; rev:1; detection_filter: track by_src, count 5, seconds 10; classtype:icmp-event;)
+alert icmp any any -> $HOME_NET any (msg:"Potential ICMP Flood Detected"; dsize:>1000; sid:100002; rev:1; classtype:attempted-dos;)
+alert icmp any any -> $HOME_NET any (msg:"ICMP Fragmentation Flood"; fragbits: M; sid:100003; rev:1;)
+alert icmp any any -> $HOME_NET any (msg:"SMURF Attack Detected"; icmp_id: 1; sid:100004; rev:1;)
+
+# UDP útoky
+alert udp any any -> $HOME_NET any (msg:"UDP Bandwidth Flood Detected"; detection_filter: track by_src, count 50, seconds 10; sid:100005; rev:1;)
+alert udp any any -> $HOME_NET any (msg:"UDP Fragmentation Flood Detected"; fragbits: M; sid:100006; rev:1;)
+alert udp any any -> $HOME_NET any (msg:"SSDP Amplification Detected"; content:"ssdp:alive"; nocase; dsize:>500; sid:100007; rev:1;)
+alert udp any any -> $HOME_NET any (msg:"CHARGEN Flood Detected"; content:"!"; sid:100008; rev:1;)
+alert udp any any -> $HOME_NET any (msg:"SNMP Amplification Detected"; content:"public"; sid:100009; rev:1;)
+alert udp any any -> $HOME_NET any (msg:"VoIP Flood Detected"; content:"INVITE"; sid:100010; rev:1;)
+
+# TCP útoky
+alert tcp any any -> $HOME_NET any (msg:"TCP SYN Amplification"; flags: S; sid:100011; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"TCP ACK Amplification"; flags: A; sid:100012; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"TCP SYN Flood Detected"; flags: S; detection_filter: track by_src, count 50, seconds 10; sid:100013; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"TCP RST Flood Detected"; flags: R; sid:100014; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"TCP ACK Flood Detected"; flags: A; sid:100015; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"TCP FIN Flood Detected"; flags: F; sid:100016; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"LAND Attack Detected"; flags: S; sid:100017; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"Spoofed Session Flood Detected"; flags: S; sid:100018; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"Spoofed Session Flood Detected"; flags: A; sid:100019; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"Spoofed Session Flood Detected"; flags: F; sid:100020; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"Spoofed Session Flood Detected"; flags: R; sid:100021; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"Slowloris Attack Detected"; flow:to_server,established; content:"Host:"; nocase; sid:100022; rev:1;)
+
+# DNS Amplification útoky
+alert udp any any -> $HOME_NET 53 (msg:"DNS Amplification Attack Detected"; content:"|85 A8|"; sid:100023; rev:1;)
+
+# HTTP útoky
+alert tcp any any -> $HOME_NET any (msg:"HTTP GET Flood Detected"; content:"GET "; nocase; detection_filter: track by_src, count 100, seconds 10; sid:100024; rev:1;)
+alert tcp any any -> $HOME_NET any (msg:"Recursive HTTP GET Flood Detected"; content:"GET "; nocase; sid:100025; rev:1;)
+
+# NTP Amplification
+alert udp any any -> $HOME_NET 123 (msg:"NTP Amplification Detected"; content:"|17 00 03 2A|"; sid:100026; rev:1;)
+
+# Smurf útoky
+alert icmp any any -> $HOME_NET any (msg:"Smurf Attack Detected"; dsize:<128; sid:100027; rev:1;)
+
+# Fraggle útoky
+alert udp any any -> $HOME_NET any (msg:"Fraggle Attack Detected"; dsize:<128; sid:100028; rev:1;)
+
+# Ping of Death
+alert icmp any any -> $HOME_NET any (msg:"Ping of Death Attack Detected"; dsize:>65500; sid:100029; rev:1;)
+
+# IP útoky
+alert ip any any -> $HOME_NET any (msg:"IP Null Attack Detected"; ip_proto:0; sid:100030; rev:1;)
+
+# ReDoS
+alert tcp any any -> $HOME_NET any (msg:"ReDoS Attack Detected"; content:"regex"; nocase; sid:100031; rev:1;)
+
+# Zero-Day DDoS
+alert ip any any -> $HOME_NET any (msg:"Zero-Day DDoS Attack Suspicious Behavior"; detection_filter: track by_src, count 200, seconds 10; sid:100032; rev:1;)
+
+# TeamSpeak 3 server - Brute Force Detected
+alert udp $EXTERNAL_NET any -> $HOME_NET 9987 (msg:"TeamSpeak 3 Brute Force Attempt Detected"; detection_filter: track by_src, count 5, seconds 60; sid:100033; rev:1;)
+
+# TeamSpeak 3 server - Possible Flood Attack
+alert udp $EXTERNAL_NET any -> $HOME_NET 9987 (msg:"Possible TeamSpeak 3 Flood Attack Detected"; detection_filter: track by_src, count 100, seconds 10; sid:100034; rev:1;)
+
+# TeamSpeak 3 server - Excessive Client Join Requests
+alert udp $EXTERNAL_NET any -> $HOME_NET 9987 (msg:"Excessive TeamSpeak 3 Join Requests Detected"; detection_filter: track by_src, count 50, seconds 10; sid:100035; rev:1;)
+
+# UDP DoS Attack (Flood)
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"UDP Flood Attack Detected"; detection_filter: track by_src, count 100, seconds 10; sid:100036; rev:1;)
+
+# UDP Fragmentation Flood Detected
+alert udp $EXTERNAL_NET any -> $HOME_NET any (msg:"UDP Fragmentation Flood Detected"; fragbits: M; sid:100037; rev:1;)
+
+# UDP DNS Amplification Attack
+alert udp $EXTERNAL_NET any -> $HOME_NET 53 (msg:"UDP DNS Amplification Attack Detected"; content:"|85 A8|"; sid:100038; rev:1;)
+
+# UDP SSDP Amplification Attack
+alert udp $EXTERNAL_NET any -> $HOME_NET 1900 (msg:"UDP SSDP Amplification Attack Detected"; content:"ssdp:alive"; nocase; sid:100039; rev:1;)
+
+# UDP NTP Amplification Attack
+alert udp $EXTERNAL_NET any -> $HOME_NET 123 (msg:"UDP NTP Amplification Attack Detected"; content:"|17 00 03 2A|"; sid:100040; rev:1;)
+
+# UDP CHARGEN Amplification Attack
+alert udp $EXTERNAL_NET any -> $HOME_NET 19 (msg:"UDP CHARGEN Amplification Attack Detected"; content:"!"; sid:100041; rev:1;)
